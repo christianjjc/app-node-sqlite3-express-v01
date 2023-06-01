@@ -1,4 +1,4 @@
-const { options } = require("./options/sqlite3DB.js");
+const { options } = require("./config/sqlite3DB.js");
 const knex = require("knex")(options);
 
 /* CREATE TABLE `proveedores` (

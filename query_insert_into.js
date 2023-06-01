@@ -1,5 +1,4 @@
-const { options } = require("./options/sqlite3DB.js");
-const knex = require("knex")(options);
+
 const moment = require("moment");
 const { proveedores } = require("./Proveedor.js");
 

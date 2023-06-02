@@ -1,11 +1,15 @@
 const express = require("express");
-const { selectAll, selectOne, selectId } = require("./query_select_from");
 const app = express();
 const { Router } = express;
 const routerProveedores = Router();
+
 const { knex } = require("./config/conexionBD");
-const { generarID, getAnoMes } = require("./services");
+const { selectAll, selectOne, selectId } = require("./query_select_from");
 const { insertData } = require("./query_insert_into");
+const { updateReg } = require("./query_update_from");
+const { deleteReg } = require("./query_delete_from");
+const { generarID, getAnoMes } = require("./services");
+
 
 const iniciaServidorWeb = () => {
   const server = app.listen(8080, () => {
@@ -33,7 +37,6 @@ routerProveedores.get("/", async (req, res) => {
   }
 });
 
-
 routerProveedores.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -57,12 +60,17 @@ routerProveedores.get("/:id", async (req, res) => {
 routerProveedores.post("/", async (req, res) => {
   const { body } = req;
   try {
-    let result = await selectId(knex, "proveedores", "id_proveedor", getAnoMes());
-    console.log('id encontrado: ' + result.id_proveedor)
+    let result = await selectId(
+      knex,
+      "proveedores",
+      "id_proveedor",
+      getAnoMes()
+    );
+    console.log("id encontrado: " + result.id_proveedor);
     const id = generarID(8, result.id_proveedor);
-    console.log('id generado: ' + id)
+    console.log("id generado: " + id);
     await insertData(knex, "proveedores", { id_proveedor: id, ...body });
-    console.log('datos insertados')
+    console.log("datos insertados");
     res.json({ Mensaje: "Datos Ingresados. OK" });
   } catch (error) {
     res.status(500).json({ error: error });
@@ -72,6 +80,48 @@ routerProveedores.post("/", async (req, res) => {
 // Cerrar la conexión al finalizar la aplicación
 process.on("exit", () => {
   knex.destroy();
+});
+
+routerProveedores.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { body } = req;
+  try {
+    const datos = await updateReg(
+      knex,
+      "proveedores",
+      "id_proveedor",
+      id,
+      body
+    );
+    if (datos) {
+      res.json({ Registros_Actualizados: datos });
+    } else {
+      res.json({ Mensaje: "No se pudo actualizar el registro." });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error al actualizar los datos" });
+  }
+});
+
+routerProveedores.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const datos = await deleteReg(
+      knex,
+      "proveedores",
+      "id_proveedor",
+      id
+    );
+    if (datos) {
+      res.json({ Registros_Eliminados: datos });
+    } else {
+      res.json({ Mensaje: "No se pudo eliminar el registro." });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error al actualizar los datos" });
+  }
 });
 
 module.exports = { iniciaServidorWeb };

@@ -1,5 +1,4 @@
-const { options } = require("./config/sqlite3DB.js");
-const knex = require("knex")(options);
+const { knex } = require("./config/conexionBD");
 
 /* CREATE TABLE `proveedores` (
   `id_proveedor` char(7) NOT NULL,
@@ -14,7 +13,7 @@ const crearTabla = async (connection, nombreTabla) => {
   await connection.schema.dropTableIfExists(nombreTabla);
   connection.schema
     .createTable(nombreTabla, (table) => {
-      table.string("id_proveedor", 7).primary().notNullable().unique(),
+      table.string("id_proveedor", 8).primary().notNullable().unique(),
         table.string("ruc", 11),
         table.string("razon_social", 250),
         table.string("direccion", 500);

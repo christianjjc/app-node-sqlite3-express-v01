@@ -1,13 +1,6 @@
-
 const moment = require("moment");
-const { proveedores } = require("./Proveedor.js");
 
-const generaID = () => {
-  const id = moment().format("YYMM");
-  console.log(id);
-};
-
-const insertData = (connection, nombreTabla, reg) => {
+/* const insertData = (conn, table, orderBy, campoBuscar, datoBuscar) => {
   connection(nombreTabla)
     .insert(reg)
     .then((e) => {
@@ -20,7 +13,17 @@ const insertData = (connection, nombreTabla, reg) => {
       knex.destroy();
     });
 };
-
+ */
 //insertData(knex, "proveedores", proveedores);
 
-generaID();
+const insertData = async (conn, table, reg) => {
+  try {
+    await conn(table).insert(reg);
+    console.log({ mensaje: "Datos Insertados con exito", reg: reg });
+  } catch (err) {
+    console.log(err);
+    throw new Error(err);
+  }
+};
+
+module.exports = { insertData };

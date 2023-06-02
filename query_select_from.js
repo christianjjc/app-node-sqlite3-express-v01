@@ -46,4 +46,18 @@ const selectOne = async (conn, table, orderBy, campoBuscar, datoBuscar) => {
   } */
 };
 
-module.exports = { selectAll, selectOne };
+const selectId = async (conn, table, campoId, anomes) => {
+  try {
+    let result = await conn
+      .select(campoId)
+      .from(table)
+      .where(campoId, "like", `${anomes}%`)
+      .orderBy(campoId, "desc")
+      .first();
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { selectAll, selectOne, selectId };
